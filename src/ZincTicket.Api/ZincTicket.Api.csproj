@@ -5,10 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\ZincTicket.Client\ZincTicket.Client.csproj" />
     <ProjectReference Include="..\ZincTicket.Migrations\ZincTicket.Migrations.csproj" />
   </ItemGroup>
 
