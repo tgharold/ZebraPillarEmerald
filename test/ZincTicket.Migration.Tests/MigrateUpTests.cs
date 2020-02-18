@@ -19,7 +19,7 @@ namespace ZincTicket.MigrationTests
                         .WithGlobalConnectionString(connectionString)
                         .WithMigrationsIn(typeof(InitialMigration).Assembly))
                 .BuildServiceProvider();
-        }        
+        }
         
         [Fact]
         public void Can_migrate_up_SQLite()

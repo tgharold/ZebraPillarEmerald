@@ -6,6 +6,12 @@
 
     <ItemGroup>
       <PackageReference Include="FluentMigrator" Version="3.2.1" />
+      <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
+      <PackageReference Include="FluentMigrator.Runner.SQLite" Version="3.2.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ZincTicket.Core\ZincTicket.Core.csproj" />
     </ItemGroup>
 
 </Project>
