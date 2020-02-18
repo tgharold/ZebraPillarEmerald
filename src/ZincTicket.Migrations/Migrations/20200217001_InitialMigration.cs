@@ -13,9 +13,21 @@ namespace ZincTicket.Migrations.Migrations
             // https://fluentmigrator.github.io/articles/multi-db-support.html
             
             Create
+                .Table("Group")
+                .InSchema(SchemaName)
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable()
+                ;
+            
+            Create
+                .Table("Ticket")
+                .InSchema(SchemaName)
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable()
+                ;
+            
+            Create
                 .Table("Users")
                 .InSchema(SchemaName)
-                .WithColumn("Id").AsInt64().Identity().NotNullable()
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable()
                 ;
         }
     }
