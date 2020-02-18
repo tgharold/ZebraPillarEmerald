@@ -6,8 +6,12 @@ namespace ZincTicket.Migrations.Migrations
     public class InitialMigration : ForwardOnlyMigration
     {
         private const string SchemaName = "zinc";
+
         public override void Up()
         {
+            // IfDatabase("sqlite")...
+            // https://fluentmigrator.github.io/articles/multi-db-support.html
+            
             Create
                 .Table("Users")
                 .InSchema(SchemaName)
