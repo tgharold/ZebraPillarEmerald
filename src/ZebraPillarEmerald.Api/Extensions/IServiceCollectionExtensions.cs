@@ -11,7 +11,7 @@ namespace ZebraPillarEmerald.Api.Extensions
         public static void ConfigureDatabaseContext(
             this IServiceCollection services, 
             IConfiguration configuration
-        )
+            )
         {
             var databaseSection = configuration.GetSection("Database");
             services.Configure<DatabaseSettings>(configuration.GetSection("Database"));
@@ -20,15 +20,21 @@ namespace ZebraPillarEmerald.Api.Extensions
             switch (databaseSettings.DatabaseType)
             {
                 case "PostgreSQL":
-                    services.AddDbContext<ZpeDbContext, ZpeDbContextPostGresSql>(ConfigurePostgresSQL);
+                    services.AddDbContext<ZpeDbContext, ZpeDbContextPostGresSql>(
+                        x => ConfigurePostgresSQL(x, databaseSettings)
+                        );
                     break;
                 
                 case "SQLiteMemory":
-                    services.AddDbContext<ZpeDbContext, ZpeDbContextSQLiteMemory>(ConfigureSQLiteMemory);
+                    services.AddDbContext<ZpeDbContext, ZpeDbContextSQLiteMemory>(
+                        x => ConfigureSQLiteMemory(x, databaseSettings)
+                        );
                     break;
                 
                 case "SQLServer":
-                    services.AddDbContext<ZpeDbContext, ZpeDbContextSqlServer>(ConfigureSQLServer);
+                    services.AddDbContext<ZpeDbContext, ZpeDbContextSqlServer>(
+                        x => ConfigureSQLServer(x, databaseSettings)
+                        );
                     break;
                 
                 default:
@@ -36,24 +42,36 @@ namespace ZebraPillarEmerald.Api.Extensions
             }
         }
 
-        private static void ConfigureSQLiteMemory(DbContextOptionsBuilder options)
+        private static void ConfigureSQLiteMemory(
+            DbContextOptionsBuilder options, 
+            DatabaseSettings databaseSettings
+            )
         {
             var dbName = DateTimeOffset.UtcNow.Ticks.ToString().PadLeft(10, '0');
             dbName = dbName.Substring(dbName.Length-10);
-            var connString = $"Data Source=file:memMigrateTest{dbName}?mode=memory&cache=shared";
+            var connString = databaseSettings?.ConnectionString 
+                ?? $"Data Source=file:memMigrateTest{dbName}?mode=memory&cache=shared";
 
             options.UseSqlite(connString);
         }
 
-        private static void ConfigureSQLServer(DbContextOptionsBuilder options)
+        private static void ConfigureSQLServer(
+            DbContextOptionsBuilder options, 
+            DatabaseSettings databaseSettings
+            )
         {
-            string connString = "user id=sa;password=YourStrong!Passw0rd;server=localhost,1433;database=PeopleDatabase;Trusted_Connection=no";
+            string connString = databaseSettings?.ConnectionString 
+                ?? "user id=sa;password=YourStrong!Passw0rd;server=localhost,1433;database=PeopleDatabase;Trusted_Connection=no";
             options.UseSqlServer(connString);
         }
         
-        private static void ConfigurePostgresSQL(DbContextOptionsBuilder options)
+        private static void ConfigurePostgresSQL(
+            DbContextOptionsBuilder options, 
+            DatabaseSettings databaseSettings
+            )
         {
-            string connString = "Host=localhost;Database=PeopleDatabase;Username=postgres;Password=example";
+            string connString = databaseSettings?.ConnectionString 
+                ?? "Host=localhost;Database=PeopleDatabase;Username=postgres;Password=example";
             options.UseNpgsql(connString);
         }
     }
