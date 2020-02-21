@@ -2,7 +2,7 @@ using FluentMigrator;
 
 namespace ZebraPillarEmerald.Migrations.Migrations
 {
-    [Migration(20200217001)]
+    [Migration(202002170001)]
     public class InitialMigration : ForwardOnlyMigration
     {
         private const string SchemaName = "zinc";
