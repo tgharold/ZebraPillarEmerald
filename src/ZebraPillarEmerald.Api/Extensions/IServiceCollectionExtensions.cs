@@ -1,14 +1,16 @@
 using System;
+using FluentMigrator.Runner;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ZebraPillarEmerald.Core.Database;
+using ZebraPillarEmerald.Migrations;
 
 namespace ZebraPillarEmerald.Api.Extensions
 {
     public static class IServiceCollectionExtensions
     {
-        public static void ConfigureDatabaseContext(
+        public static void ConfigureDatabase(
             this IServiceCollection services, 
             IConfiguration configuration
             )
@@ -23,18 +25,39 @@ namespace ZebraPillarEmerald.Api.Extensions
                     services.AddDbContext<ZpeDbContext, ZpeDbContextPostGresSql>(
                         x => ConfigurePostgresSQL(x, databaseSettings)
                         );
+                    services.AddFluentMigratorCore()
+                        .ConfigureRunner(
+                            builder => builder
+                                .AddPostgres()
+                                .WithGlobalConnectionString(databaseSettings.ConnectionString)
+                                .ScanIn(typeof(MigrationMarker).Assembly).For.Migrations())
+                        ;
                     break;
                 
                 case "SQLiteMemory":
                     services.AddDbContext<ZpeDbContext, ZpeDbContextSQLiteMemory>(
                         x => ConfigureSQLiteMemory(x, databaseSettings)
                         );
+                    services.AddFluentMigratorCore()
+                        .ConfigureRunner(
+                            builder => builder
+                                .AddSQLite()
+                                .WithGlobalConnectionString(databaseSettings.ConnectionString)
+                                .ScanIn(typeof(MigrationMarker).Assembly).For.Migrations())
+                        ;
                     break;
                 
                 case "SQLServer":
                     services.AddDbContext<ZpeDbContext, ZpeDbContextSqlServer>(
                         x => ConfigureSQLServer(x, databaseSettings)
                         );
+                    services.AddFluentMigratorCore()
+                        .ConfigureRunner(
+                            builder => builder
+                                .AddSqlServer()
+                                .WithGlobalConnectionString(databaseSettings.ConnectionString)
+                                .ScanIn(typeof(MigrationMarker).Assembly).For.Migrations())
+                        ;
                     break;
                 
                 default:
@@ -43,6 +66,7 @@ namespace ZebraPillarEmerald.Api.Extensions
                         $"'{databaseSettings.DatabaseType}' is not a supported database type."
                         );
             }
+            
         }
 
         private static void ConfigureSQLiteMemory(
@@ -64,7 +88,7 @@ namespace ZebraPillarEmerald.Api.Extensions
             )
         {
             string connString = databaseSettings?.ConnectionString 
-                ?? "user id=sa;password=YourStrong!Passw0rd;server=localhost,1433;database=PeopleDatabase;Trusted_Connection=no";
+                ?? "user id=sa;password=YourStrong!Passw0rd;server=localhost,1433;database=ZebraPillarEmerald;Trusted_Connection=no";
             options.UseSqlServer(connString);
         }
         
@@ -74,7 +98,7 @@ namespace ZebraPillarEmerald.Api.Extensions
             )
         {
             string connString = databaseSettings?.ConnectionString 
-                ?? "Host=localhost;Database=PeopleDatabase;Username=postgres;Password=example";
+                ?? "Host=localhost;Database=ZebraPillarEmerald;Username=postgres;Password=YourStrong!Passw0rd";
             options.UseNpgsql(connString);
         }
     }
