@@ -351,3 +351,6 @@ MigrationBackup/
 
 # JetBrains
 .idea/
+
+# SQLite test databases
+/src/ZebraPillarEmerald.Api/*.db
