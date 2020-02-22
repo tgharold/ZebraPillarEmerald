@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FluentMigrator.Runner;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +22,7 @@ namespace ZebraPillarEmerald.Api.Extensions
 
             switch (databaseSettings.DatabaseType)
             {
-                case "PostgreSQL":
+                case DatabaseTypes.PostgreSQL:
                     services.AddDbContext<ZpeDbContext, ZpeDbContextPostGresSql>(
                         x => ConfigurePostgresSQL(x, databaseSettings)
                         );
@@ -34,7 +35,7 @@ namespace ZebraPillarEmerald.Api.Extensions
                         ;
                     break;
                 
-                case "SQLiteMemory":
+                case DatabaseTypes.SQLiteMemory:
                     services.AddDbContext<ZpeDbContext, ZpeDbContextSQLiteMemory>(
                         x => ConfigureSQLiteMemory(x, databaseSettings)
                         );
@@ -47,7 +48,7 @@ namespace ZebraPillarEmerald.Api.Extensions
                         ;
                     break;
                 
-                case "SQLServer":
+                case DatabaseTypes.SQLServer:
                     services.AddDbContext<ZpeDbContext, ZpeDbContextSqlServer>(
                         x => ConfigureSQLServer(x, databaseSettings)
                         );
@@ -63,7 +64,8 @@ namespace ZebraPillarEmerald.Api.Extensions
                 default:
                     throw new ArgumentOutOfRangeException(
                         nameof(databaseSettings.DatabaseType),
-                        $"'{databaseSettings.DatabaseType}' is not a supported database type."
+                        $"'{databaseSettings.DatabaseType}' is not a supported database type.  " +
+                        $"Supported types are: {string.Join(", ", DatabaseTypes.All.Value.Select(x => $"'{x}'"))}."
                         );
             }
             
