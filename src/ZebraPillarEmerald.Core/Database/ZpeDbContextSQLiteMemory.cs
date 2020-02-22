@@ -7,5 +7,9 @@ namespace ZebraPillarEmerald.Core.Database
         public ZpeDbContextSQLiteMemory(DbContextOptions<ZpeDbContextSQLiteMemory> options) : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+        }
     }
 }
