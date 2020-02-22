@@ -59,6 +59,21 @@ namespace ZebraPillarEmerald.Api.Extensions
                         ;
                     break;
                 
+                case DatabaseTypes.SQLite:
+                    services.AddDbContext<ZpeDbContext, ZpeDbContextSQLite>(
+                        x => x.UseSqlite(connectionStringSettings.ZebraPillarEmerald)
+                    );
+                    services
+                        .AddFluentMigratorCore()
+                        .ConfigureRunner(
+                            builder => builder
+                                .AddSQLite()
+                                .WithGlobalConnectionString(connectionStringSettings.ZebraPillarEmerald)
+                                .ScanIn(typeof(MigrationMarker).Assembly).For.Migrations())
+                        .Configure<RunnerOptions>(cfg => cfg.Profile = environment.EnvironmentName)
+                        ;
+                    break;
+                
                 case DatabaseTypes.SQLServer:
                     services.AddDbContext<ZpeDbContext, ZpeDbContextSqlServer>(
                         x => x.UseSqlServer(connectionStringSettings.ZebraPillarEmerald)

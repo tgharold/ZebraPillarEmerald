@@ -10,7 +10,7 @@ namespace ZebraPillarEmerald.Core.Database
         /// Sqlite will close/delete memory/temporary databases when the last connection
         /// is closed. We use a hidden connection variable to keep the database
         /// intact until we no longer need it.
-        /// </summary>
+        /// </summary>                                               Memory
         private readonly SqliteConnection _holdOpenConnection;
         
         public ZpeDbContextSQLiteMemory(
@@ -24,8 +24,9 @@ namespace ZebraPillarEmerald.Core.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            ZpeDbContextSQLite.ConfigureForSqlite();
         }
-        
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

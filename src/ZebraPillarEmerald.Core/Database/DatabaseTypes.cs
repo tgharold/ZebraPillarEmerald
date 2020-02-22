@@ -8,6 +8,7 @@ namespace ZebraPillarEmerald.Core.Database
     public static class DatabaseTypes
     {
         public const string PostgreSQL = "PostgreSQL";
+        public const string SQLite = "SQLite";
         public const string SQLiteMemory = "SQLiteMemory";
         public const string SQLServer = "SQLServer";
 
