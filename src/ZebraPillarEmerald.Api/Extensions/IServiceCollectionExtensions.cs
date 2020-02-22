@@ -38,7 +38,10 @@ namespace ZebraPillarEmerald.Api.Extensions
                     break;
                 
                 default:
-                    throw new NotImplementedException();
+                    throw new ArgumentOutOfRangeException(
+                        nameof(databaseSettings.DatabaseType),
+                        $"'{databaseSettings.DatabaseType}' is not a supported database type."
+                        );
             }
         }
 

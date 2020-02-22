@@ -1,8 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace ZebraPillarEmerald.Core.Database
 {
     public class ZpeDbContextSQLiteMemory : ZpeDbContext
     {
-        public ZpeDbContextSQLiteMemory(string nameOrConnectionString) : base(nameOrConnectionString)
+        public ZpeDbContextSQLiteMemory(DbContextOptions<ZpeDbContextSQLiteMemory> options) : base(options)
         {
         }
     }

@@ -1,8 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace ZebraPillarEmerald.Core.Database
 {
     public class ZpeDbContextPostGresSql : ZpeDbContext
     {
-        public ZpeDbContextPostGresSql(string nameOrConnectionString) : base(nameOrConnectionString)
+        public ZpeDbContextPostGresSql(DbContextOptions<ZpeDbContextPostGresSql> options) : base(options)
         {
         }
     }
