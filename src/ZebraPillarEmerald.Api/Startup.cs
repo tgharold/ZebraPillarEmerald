@@ -5,22 +5,39 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ZebraPillarEmerald.Api.Extensions;
+using ZebraPillarEmerald.Core.Database;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace ZebraPillarEmerald.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
+
+        public Startup(
+            IConfiguration configuration,
+            IWebHostEnvironment environment
+            )
         {
-            Configuration = configuration;
+            _environment = environment;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(
+            IServiceCollection services
+            )
         {
-            services.ConfigureDatabase(Configuration);
+            //TODO: simplify this block of code
+            var databaseSettings = new DatabaseSettings();
+            _configuration.GetSection("Database").Bind(databaseSettings);
+            services.AddSingleton(typeof(DatabaseSettings), databaseSettings);
+            var connectionStringSettings = new ConnectionStringSettings();
+            _configuration.GetSection("ConnectionStrings").Bind(connectionStringSettings);
+            services.AddSingleton(typeof(ConnectionStringSettings), connectionStringSettings);
+
+            services.ConfigureDatabase(_environment, databaseSettings, connectionStringSettings);
 
             services.AddControllers();
         }
@@ -28,11 +45,10 @@ namespace ZebraPillarEmerald.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
             IApplicationBuilder app, 
-            IWebHostEnvironment env,
             IServiceProvider serviceProvider
             )
         {
-            if (env.IsDevelopment())
+            if (_environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }

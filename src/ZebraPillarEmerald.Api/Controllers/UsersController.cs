@@ -21,6 +21,8 @@ namespace ZebraPillarEmerald.Api.Controllers
         
         public async Task<IActionResult> Index([FromQuery] UsersIndexRequest request)
         {
+            var conn = _dbContext.Database.GetDbConnection();
+            
             var users = await _dbContext.Users.ToListAsync();
             return Ok(users);
         }
