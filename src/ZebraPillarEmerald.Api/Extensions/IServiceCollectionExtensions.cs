@@ -17,46 +17,49 @@ namespace ZebraPillarEmerald.Api.Extensions
             )
         {
             var databaseSection = configuration.GetSection("Database");
-            services.Configure<DatabaseSettings>(configuration.GetSection("Database"));
             var databaseSettings = databaseSection.Get<DatabaseSettings>();
+            services.AddSingleton(typeof(DatabaseSettings), databaseSettings);
+            var connectionStringSection = configuration.GetSection("ConnectionStrings");
+            var connectionStringSettings = connectionStringSection.Get<ConnectionStringSettings>();
+            services.AddSingleton(typeof(ConnectionStringSettings), connectionStringSettings);
 
             switch (databaseSettings.DatabaseType)
             {
                 case DatabaseTypes.PostgreSQL:
                     services.AddDbContext<ZpeDbContext, ZpeDbContextPostGresSql>(
-                        x => ConfigurePostgresSQL(x, databaseSettings)
+                        x => x.UseNpgsql(connectionStringSettings.ZebraPillarEmerald)
                         );
                     services.AddFluentMigratorCore()
                         .ConfigureRunner(
                             builder => builder
                                 .AddPostgres()
-                                .WithGlobalConnectionString(databaseSettings.ConnectionString)
+                                .WithGlobalConnectionString(connectionStringSettings.ZebraPillarEmerald)
                                 .ScanIn(typeof(MigrationMarker).Assembly).For.Migrations())
                         ;
                     break;
                 
                 case DatabaseTypes.SQLiteMemory:
                     services.AddDbContext<ZpeDbContext, ZpeDbContextSQLiteMemory>(
-                        x => ConfigureSQLiteMemory(x, databaseSettings)
+                        x => ConfigureSQLiteMemory(x, connectionStringSettings)
                         );
                     services.AddFluentMigratorCore()
                         .ConfigureRunner(
                             builder => builder
                                 .AddSQLite()
-                                .WithGlobalConnectionString(databaseSettings.ConnectionString)
+                                .WithGlobalConnectionString(connectionStringSettings.ZebraPillarEmerald)
                                 .ScanIn(typeof(MigrationMarker).Assembly).For.Migrations())
                         ;
                     break;
                 
                 case DatabaseTypes.SQLServer:
                     services.AddDbContext<ZpeDbContext, ZpeDbContextSqlServer>(
-                        x => ConfigureSQLServer(x, databaseSettings)
+                        x => x.UseSqlServer(connectionStringSettings.ZebraPillarEmerald)
                         );
                     services.AddFluentMigratorCore()
                         .ConfigureRunner(
                             builder => builder
                                 .AddSqlServer()
-                                .WithGlobalConnectionString(databaseSettings.ConnectionString)
+                                .WithGlobalConnectionString(connectionStringSettings.ZebraPillarEmerald)
                                 .ScanIn(typeof(MigrationMarker).Assembly).For.Migrations())
                         ;
                     break;
@@ -71,37 +74,21 @@ namespace ZebraPillarEmerald.Api.Extensions
             
         }
 
+        /// <summary>SQLite in-memory is a database that only exists during the application's lifetime.
+        /// It's only to be used in testing environments where data can be discarded at the end of a run.
+        /// </summary>
         private static void ConfigureSQLiteMemory(
             DbContextOptionsBuilder options, 
-            DatabaseSettings databaseSettings
+            ConnectionStringSettings connectionStringSettings
             )
         {
             var dbName = DateTimeOffset.UtcNow.Ticks.ToString().PadLeft(10, '0');
             dbName = dbName.Substring(dbName.Length-10);
-            var connString = databaseSettings?.ConnectionString 
-                ?? $"Data Source=file:memMigrateTest{dbName}?mode=memory&cache=shared";
 
-            options.UseSqlite(connString);
-        }
+            if (string.IsNullOrWhiteSpace(connectionStringSettings.ZebraPillarEmerald))
+                connectionStringSettings.ZebraPillarEmerald = $"Data Source=file:memZpeTest{dbName}?mode=memory&cache=shared";
 
-        private static void ConfigureSQLServer(
-            DbContextOptionsBuilder options, 
-            DatabaseSettings databaseSettings
-            )
-        {
-            string connString = databaseSettings?.ConnectionString 
-                ?? "user id=sa;password=YourStrong!Passw0rd;server=localhost,1433;database=ZebraPillarEmerald;Trusted_Connection=no";
-            options.UseSqlServer(connString);
-        }
-        
-        private static void ConfigurePostgresSQL(
-            DbContextOptionsBuilder options, 
-            DatabaseSettings databaseSettings
-            )
-        {
-            string connString = databaseSettings?.ConnectionString 
-                ?? "Host=localhost;Database=ZebraPillarEmerald;Username=postgres;Password=YourStrong!Passw0rd";
-            options.UseNpgsql(connString);
+            options.UseSqlite(connectionStringSettings.ZebraPillarEmerald);
         }
     }
 }

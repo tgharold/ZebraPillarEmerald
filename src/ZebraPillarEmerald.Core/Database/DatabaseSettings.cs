@@ -1,8 +1,7 @@
-namespace ZebraPillarEmerald.Api
+namespace ZebraPillarEmerald.Core.Database
 {
     public class DatabaseSettings
     {
         public string DatabaseType { get; set; }
-        public string ConnectionString { get; set; }
     }
 }
