@@ -1,5 +1,6 @@
 using System;
 using ZebraPillarEmerald.Core.Attributes;
+using ZebraPillarEmerald.Core.Interfaces;
 
 namespace ZebraPillarEmerald.Core.Options
 {
@@ -14,7 +15,7 @@ namespace ZebraPillarEmerald.Core.Options
             public string ZebraPillarEmerald { get; set; } = "zpe";
         }
 
-        public bool Validate()
+        public bool IsValid()
         {
             throw new NotImplementedException();
         }

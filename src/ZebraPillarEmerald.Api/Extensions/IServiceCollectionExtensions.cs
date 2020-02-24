@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ZebraPillarEmerald.Core.Attributes;
 using ZebraPillarEmerald.Core.Database;
+using ZebraPillarEmerald.Core.Interfaces;
 using ZebraPillarEmerald.Core.Options;
 using ZebraPillarEmerald.Migrations;
 
@@ -110,10 +111,20 @@ namespace ZebraPillarEmerald.Api.Extensions
                 ?? throw new ArgumentNullException(nameof(ConfigurationSectionNameAttribute));
             
             var configurationSection = configuration.GetSection(sectionName);
+            
+            //Notes:
+            // - Validation code (maybe) runs the first time an instance is requested from the container
 
             services.AddOptions<T>()
                 .Bind(configurationSection)
-                .Validate(x => x.Validate());
+                .Validate(x => x.IsValid());
+            
+            // https://stackoverflow.com/a/51693303
+
+            services.PostConfigure<T>(x =>
+            {
+                
+            });
 
             return configurationSection.Get<T>();
         }
