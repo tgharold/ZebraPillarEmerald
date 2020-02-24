@@ -1,3 +1,4 @@
+using System;
 using FluentMigrator;
 using Microsoft.Extensions.Options;
 using ZebraPillarEmerald.Core.Options;
@@ -18,28 +19,33 @@ namespace ZebraPillarEmerald.Migrations.Migrations
         
         public override void Up()
         {
-            var schemaName = _databaseOptionsOptions.SchemaNames.ZebraPillarEmerald;
+            var zpeSchemaName = _databaseOptionsOptions.SchemaNames.ZebraPillarEmerald;
+            
+            //TODO: The following can be removed at some point after we add validation around IOptions<T>
+            if (string.IsNullOrEmpty(zpeSchemaName))
+                throw new ArgumentNullException(
+                    $"{nameof(DatabaseOptions.SchemaNames)}.{nameof(DatabaseOptions.DatabaseSchemaNames.ZebraPillarEmerald)} is missing.");
 
             // IfDatabase("sqlite")...
             // https://fluentmigrator.github.io/articles/multi-db-support.html
             
             Create
                 .Table("Group")
-                .InSchema(schemaName)
+                .InSchema(zpeSchemaName)
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable()
                 .WithColumn("Name").AsString(250).NotNullable()
                 ;
             
             Create
                 .Table("Ticket")
-                .InSchema(schemaName)
+                .InSchema(zpeSchemaName)
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable()
                 .WithColumn("Name").AsString(250).NotNullable()
                 ;
             
             Create
                 .Table("Users")
-                .InSchema(schemaName)
+                .InSchema(zpeSchemaName)
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable()
                 .WithColumn("Name").AsString(250).NotNullable()
                 ;
