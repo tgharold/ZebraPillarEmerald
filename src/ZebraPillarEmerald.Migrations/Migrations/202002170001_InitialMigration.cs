@@ -1,6 +1,5 @@
 using FluentMigrator;
 using Microsoft.Extensions.Options;
-using ZebraPillarEmerald.Core.Database;
 using ZebraPillarEmerald.Core.Options;
 
 namespace ZebraPillarEmerald.Migrations.Migrations
@@ -11,10 +10,10 @@ namespace ZebraPillarEmerald.Migrations.Migrations
         private readonly DatabaseOptions _databaseOptionsOptions;
 
         public InitialMigration(
-            IOptionsSnapshot<DatabaseOptions> snapshotOptionsAccessor
+            IOptions<DatabaseOptions> optionsAccessor
             )
         {
-            _databaseOptionsOptions = snapshotOptionsAccessor.Value;
+            _databaseOptionsOptions = optionsAccessor.Value;
         }
         
         public override void Up()
