@@ -7,7 +7,7 @@ using ZebraPillarEmerald.Core.Database;
 
 namespace ZebraPillarEmerald.Api.Controllers
 {
-    [Microsoft.AspNetCore.Mvc.Route("/users")]
+    [Route("/users")]
     public class UsersController : Controller
     {
         private readonly ZpeDbContext _dbContext;
