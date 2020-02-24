@@ -32,7 +32,6 @@ namespace ZebraPillarEmerald.Api
             IServiceCollection services
             )
         {
-            services.AddOptions();
             var databaseOptions = services.ConfigureAndValidateSection<DatabaseOptions>(_configuration);
             var connectionStringsOptions = services.ConfigureAndValidateSection<ConnectionStringsOptions>(_configuration);
 
