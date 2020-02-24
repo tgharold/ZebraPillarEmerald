@@ -114,15 +114,17 @@ namespace ZebraPillarEmerald.Api.Extensions
             
             //Notes:
             // - Validation code (maybe) runs the first time an instance is requested from the container
+            // - https://github.com/dotnet/extensions/issues/459 (eager validation)
+            // - https://stackoverflow.com/a/51693303 (discussion)
 
             services.AddOptions<T>()
-                .Bind(configurationSection)
-                .Validate(x => x.IsValid());
+                .Bind(configurationSection);
             
-            // https://stackoverflow.com/a/51693303
+            
 
-            services.PostConfigure<T>(x =>
+            services.PostConfigureAll<T>(x =>
             {
+                var validity = x.IsValid(); 
                 
             });
 

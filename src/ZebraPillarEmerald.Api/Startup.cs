@@ -1,15 +1,13 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using ZebraPillarEmerald.Api.Extensions;
-using ZebraPillarEmerald.Core.Database;
 using ZebraPillarEmerald.Core.Options;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using FluentValidation.AspNetCore;
+using ZebraPillarEmerald.Core.Options.Validation;
 
 namespace ZebraPillarEmerald.Api
 {
@@ -36,8 +34,11 @@ namespace ZebraPillarEmerald.Api
             var connectionStringsOptions = services.ConfigureAndValidateSection<ConnectionStringsOptions>(_configuration);
 
             services.ConfigureDatabase(_environment, databaseOptions, connectionStringsOptions);
-
+            
             services.AddControllers();
+            
+            services.AddMvc().AddFluentValidation();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
