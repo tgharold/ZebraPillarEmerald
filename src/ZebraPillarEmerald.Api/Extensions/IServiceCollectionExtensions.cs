@@ -104,29 +104,19 @@ namespace ZebraPillarEmerald.Api.Extensions
         public static T ConfigureAndValidateSection<T>(
             this IServiceCollection services,
             IConfiguration configuration
-            ) where T : class
+            ) where T : class, ICanValidate
         {
             var sectionName = typeof(T).GetCustomAttribute<ConfigurationSectionNameAttribute>()?.SectionName
                 ?? throw new ArgumentNullException(nameof(ConfigurationSectionNameAttribute));
             
             var configurationSection = configuration.GetSection(sectionName);
-            services.Configure<T>(configurationSection);
-            
-            /*services
-                .PostConfigure<T>(settings =>
-                {
-                    var configErrors = settings.ValidationErrors().ToArray();
-                    if (configErrors.Any())
-                    {
-                        var aggrErrors = string.Join(",", configErrors);
-                        var count = configErrors.Length;
-                        var configType = typeof(T).Name;
-                        throw new ApplicationException(
-                            $"Found {count} configuration error(s) in {configType}: {aggrErrors}");
-                    }
-                });*/
+
+            services.AddOptions<T>()
+                .Bind(configurationSection)
+                .Validate(x => x.Validate());
 
             return configurationSection.Get<T>();
         }
+
     }
 }
