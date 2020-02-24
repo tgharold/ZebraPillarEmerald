@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using ZebraPillarEmerald.Core.Options;
 
 namespace ZebraPillarEmerald.Core.Database
 {
@@ -15,10 +17,10 @@ namespace ZebraPillarEmerald.Core.Database
         
         public ZpeDbContextSQLiteMemory(
             DbContextOptions<ZpeDbContextSQLiteMemory> options,
-            ConnectionStringSettings connectionStringSettings
+            IOptionsSnapshot<ConnectionStringsOptions> snapshotOptionsAccessor
             ) : base(options)
         {
-            _holdOpenConnection = new SqliteConnection(connectionStringSettings.ZebraPillarEmerald);
+            _holdOpenConnection = new SqliteConnection(snapshotOptionsAccessor.Value.ZebraPillarEmerald);
             _holdOpenConnection.Open();            
         }
 

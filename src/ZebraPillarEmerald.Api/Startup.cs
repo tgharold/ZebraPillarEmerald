@@ -1,11 +1,14 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using ZebraPillarEmerald.Api.Extensions;
 using ZebraPillarEmerald.Core.Database;
+using ZebraPillarEmerald.Core.Options;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace ZebraPillarEmerald.Api
@@ -29,15 +32,11 @@ namespace ZebraPillarEmerald.Api
             IServiceCollection services
             )
         {
-            //TODO: simplify this block of code
-            var databaseSettings = new DatabaseSettings();
-            _configuration.GetSection("Database").Bind(databaseSettings);
-            services.AddSingleton(typeof(DatabaseSettings), databaseSettings);
-            var connectionStringSettings = new ConnectionStringSettings();
-            _configuration.GetSection("ConnectionStrings").Bind(connectionStringSettings);
-            services.AddSingleton(typeof(ConnectionStringSettings), connectionStringSettings);
+            services.AddOptions();
+            var databaseOptions = services.ConfigureAndValidateSection<DatabaseOptions>(_configuration);
+            var connectionStringsOptions = services.ConfigureAndValidateSection<ConnectionStringsOptions>(_configuration);
 
-            services.ConfigureDatabase(_environment, databaseSettings, connectionStringSettings);
+            services.ConfigureDatabase(_environment, databaseOptions, connectionStringsOptions);
 
             services.AddControllers();
         }
