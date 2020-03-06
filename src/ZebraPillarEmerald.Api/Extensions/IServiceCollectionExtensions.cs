@@ -102,13 +102,14 @@ namespace ZebraPillarEmerald.Api.Extensions
             }
         }
         
+        /// <summary>Bind a section of appsettings.json to a POCO using the options pattern.
+        /// This variant of the method wires up DataAnnotation validation.</summary>
         public static T ConfigureAndValidateSection<T>(
             this IServiceCollection services,
             IConfiguration configuration
             ) where T : class
         {
-            var sectionName = typeof(T).GetCustomAttribute<ConfigurationSectionNameAttribute>()?.SectionName
-                              ?? throw new ArgumentNullException(nameof(ConfigurationSectionNameAttribute));
+            var sectionName = GetSectionName<T>();
             
             var configurationSection = configuration.GetSection(sectionName);
             
@@ -120,5 +121,12 @@ namespace ZebraPillarEmerald.Api.Extensions
             return configurationSection.Get<T>();
         }
 
+        /// <summary>Get the section name for the object.  Defaults to the class name unless
+        /// the ConfigurationSectionNameAttribute is used.</summary>
+        private static string GetSectionName<T>() where T : class
+        {
+            return typeof(T).GetCustomAttribute<ConfigurationSectionNameAttribute>()?.SectionName
+                ?? typeof(T).Name;
+        }
     }
 }

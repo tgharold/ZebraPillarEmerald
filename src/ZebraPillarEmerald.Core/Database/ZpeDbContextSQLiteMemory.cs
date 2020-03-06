@@ -20,6 +20,8 @@ namespace ZebraPillarEmerald.Core.Database
             IOptionsSnapshot<ConnectionStringsSettings> snapshotOptionsAccessor
             ) : base(options)
         {
+            //TODO: Examine whether I captured a dependency (passing in IOptionsSnapshot<T>)
+            
             _holdOpenConnection = new SqliteConnection(snapshotOptionsAccessor.Value.ZebraPillarEmerald);
             _holdOpenConnection.Open();            
         }
