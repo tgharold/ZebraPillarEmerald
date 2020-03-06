@@ -1,30 +1,30 @@
 using System;
 using FluentMigrator;
 using Microsoft.Extensions.Options;
-using ZebraPillarEmerald.Core.Options;
+using ZebraPillarEmerald.Core.Settings;
 
 namespace ZebraPillarEmerald.Migrations.Migrations
 {
     [Migration(202002170001)]
     public class InitialMigration : ForwardOnlyMigration
     {
-        private readonly DatabaseOptions _databaseOptionsOptions;
+        private readonly DatabaseSettings _databaseSettingsSettings;
 
         public InitialMigration(
-            IOptions<DatabaseOptions> optionsAccessor
+            IOptions<DatabaseSettings> optionsAccessor
             )
         {
-            _databaseOptionsOptions = optionsAccessor.Value;
+            _databaseSettingsSettings = optionsAccessor.Value;
         }
         
         public override void Up()
         {
-            var zpeSchemaName = _databaseOptionsOptions.SchemaNames.ZebraPillarEmerald;
+            var zpeSchemaName = _databaseSettingsSettings.SchemaNames.ZebraPillarEmerald;
             
             //TODO: The following can be removed at some point after we add validation around IOptions<T>
             if (string.IsNullOrEmpty(zpeSchemaName))
                 throw new ArgumentNullException(
-                    $"{nameof(DatabaseOptions.SchemaNames)}.{nameof(DatabaseOptions.DatabaseSchemaNames.ZebraPillarEmerald)} is missing.");
+                    $"{nameof(DatabaseSettings.SchemaNames)}.{nameof(DatabaseSettings.DatabaseSchemaNames.ZebraPillarEmerald)} is missing.");
 
             // IfDatabase("sqlite")...
             // https://fluentmigrator.github.io/articles/multi-db-support.html
