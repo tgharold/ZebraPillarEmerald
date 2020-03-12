@@ -33,7 +33,7 @@ namespace ZebraPillarEmerald.Api
             services.AddValidatedSettings<DatabaseSettings>(_configuration);
             services.AddValidatedSettings<ConnectionStringsSettings>(_configuration);
 
-            services.ConfigureDatabase(_environment, databaseOptions, connectionStringsOptions);
+            services.ConfigureDatabase(_environment);
             
             services.AddControllers();
             

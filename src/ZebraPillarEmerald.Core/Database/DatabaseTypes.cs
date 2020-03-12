@@ -9,7 +9,6 @@ namespace ZebraPillarEmerald.Core.Database
     {
         public const string PostgreSQL = "PostgreSQL";
         public const string SQLite = "SQLite";
-        public const string SQLiteMemory = "SQLiteMemory";
         public const string SQLServer = "SQLServer";
 
         public static Lazy<IEnumerable<string>> All = new Lazy<IEnumerable<string>>(() =>
