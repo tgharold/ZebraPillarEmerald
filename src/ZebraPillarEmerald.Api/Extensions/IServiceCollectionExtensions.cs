@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using FluentMigrator.Runner;
+using FluentMigrator.Runner.Initialization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,8 +18,8 @@ namespace ZebraPillarEmerald.Api.Extensions
             IWebHostEnvironment environment
             )
         {
-            services.AddScoped<IOptions<ZebraPillarEmeraldRunnerOptions>>()
-                .Configure<ZebraPillarEmeraldRunnerOptions>(cfg =>
+            services.AddScoped<IOptions<RunnerOptions>>()
+                .Configure<RunnerOptions>(cfg =>
                 {
                     cfg.Profile = environment.EnvironmentName;
                 })
