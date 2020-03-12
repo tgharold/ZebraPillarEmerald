@@ -1,15 +1,11 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using FluentMigrator.Runner;
 using FluentMigrator.Runner.Initialization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ZebraPillarEmerald.Core.Attributes;
 using ZebraPillarEmerald.Core.Database;
-using ZebraPillarEmerald.Core.Extensions;
 using ZebraPillarEmerald.Core.Settings;
 using ZebraPillarEmerald.Migrations;
 
@@ -100,33 +96,6 @@ namespace ZebraPillarEmerald.Api.Extensions
                         $"Supported types are: {string.Join(", ", DatabaseTypes.All.Value.Select(x => $"'{x}'"))}."
                         );
             }
-        }
-        
-        /// <summary>Bind a section of appsettings.json to a POCO using the options pattern.
-        /// This variant of the method wires up DataAnnotation validation.</summary>
-        public static T ConfigureAndValidateSection<T>(
-            this IServiceCollection services,
-            IConfiguration configuration
-            ) where T : class
-        {
-            var sectionName = GetSectionName<T>();
-            
-            var configurationSection = configuration.GetSection(sectionName);
-            
-            services.AddOptions<T>()
-                .Bind(configurationSection)
-                .RecursivelyValidateDataAnnotations()
-                ;
-            
-            return configurationSection.Get<T>();
-        }
-
-        /// <summary>Get the section name for the object.  Defaults to the class name unless
-        /// the ConfigurationSectionNameAttribute is used.</summary>
-        private static string GetSectionName<T>() where T : class
-        {
-            return typeof(T).GetCustomAttribute<ConfigurationSectionNameAttribute>()?.SectionName
-                ?? typeof(T).Name;
         }
     }
 }

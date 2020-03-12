@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using OptionsPatternValidation;
 using ZebraPillarEmerald.Core.Attributes;
 
 namespace ZebraPillarEmerald.Core.Settings
 {
-    [ConfigurationSectionName("Database")]
+    [SettingsSectionName("Database")]
     public class DatabaseSettings
     {
         public DatabaseSchemaNames SchemaNames { get; set; } = new DatabaseSchemaNames();

@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using ZebraPillarEmerald.Core.Attributes;
+using OptionsPatternValidation;
 
 namespace ZebraPillarEmerald.Core.Settings
 {
-    [ConfigurationSectionName("ConnectionStrings")]
+    [SettingsSectionName("ConnectionStrings")]
     public class ConnectionStringsSettings
     {
         [Required]

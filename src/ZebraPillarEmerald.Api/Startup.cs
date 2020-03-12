@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ZebraPillarEmerald.Api.Extensions;
 using FluentValidation.AspNetCore;
+using OptionsPatternValidation;
 using ZebraPillarEmerald.Core.Settings;
 
 namespace ZebraPillarEmerald.Api
@@ -29,8 +30,8 @@ namespace ZebraPillarEmerald.Api
             IServiceCollection services
             )
         {
-            var databaseOptions = services.ConfigureAndValidateSection<DatabaseSettings>(_configuration);
-            var connectionStringsOptions = services.ConfigureAndValidateSection<ConnectionStringsSettings>(_configuration);
+            services.AddValidatedSettings<DatabaseSettings>(_configuration);
+            services.AddValidatedSettings<ConnectionStringsSettings>(_configuration);
 
             services.ConfigureDatabase(_environment, databaseOptions, connectionStringsOptions);
             
